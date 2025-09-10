@@ -24,6 +24,7 @@ const Addresses = () => {
     state: "",
     pincode: "",
     phone: "",
+    altPhone: "",
     isDefault: false,
   };
 
@@ -106,7 +107,7 @@ const Addresses = () => {
                     value={value}
                     onChange={handleNewChange}
                   />
-                ) : null // Don't render the checkbox
+                ) : null 
             )}
           </div>
           <button
@@ -129,22 +130,21 @@ const Addresses = () => {
             >
               {editingId === address._id ? (
                 <>
-                  {Object.entries(editForm).map(
-                    ([key, value], i) =>
-                      key !== "isDefault" ? (
-                        <input
-                          key={i}
-                          type="text"
-                          name={key}
-                          placeholder={
-                            key.charAt(0).toUpperCase() + key.slice(1)
-                          }
-                          className="w-full mb-2 border rounded px-3 py-1 text-sm"
-                          value={value}
-                          onChange={handleEditChange}
-                        />
-                      ) : null // hide isDefault in edit form
-                  )}
+                  {Object.entries(editForm).map(([key, value], i) => {
+                    if (key === "isDefault") return null; // exclude isDefault
+                    return (
+                      <input
+                        key={i}
+                        type="text"
+                        name={key}
+                        placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+                        className="w-full mb-2 border rounded px-3 py-1 text-sm"
+                        value={value}
+                        onChange={handleEditChange}
+                      />
+                    );
+                  })}
+
                   <div className="flex gap-2 mt-3">
                     <button
                       onClick={handleUpdate}
@@ -185,6 +185,10 @@ const Addresses = () => {
                     <p>
                       <span className="font-semibold">Phone:</span>{" "}
                       {address.phone}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Alternate Phone:</span>{" "}
+                      {address.altPhone}
                     </p>
                     <p>
                       <span className="font-semibold">Address:</span>{" "}

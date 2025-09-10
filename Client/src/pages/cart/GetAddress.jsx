@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddressContext } from "../../context/AddressContext";
 
 const GetAddress = () => {
   const navigate = useNavigate();
-  const { addAddress } = useAddressContext();
+  const { addresses, addAddress } = useAddressContext();
 
   const [formData, setFormData] = useState({
     country: "",
@@ -14,8 +14,16 @@ const GetAddress = () => {
     state: "",
     pincode: "",
     phone: "",
-    isDefault: false,
+    altPhone: "",
+    isDefault: addresses.length === 0, // Default to true if no addresses
   });
+
+  // Update isDefault if addresses change (optional safety)
+  useEffect(() => {
+    if (addresses.length === 0) {
+      setFormData((prev) => ({ ...prev, isDefault: true }));
+    }
+  }, [addresses]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -38,7 +46,9 @@ const GetAddress = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 to-pink-200 py-12 px-4 sm:px-6 lg:px-8">
       <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-3xl">
-        <h2 className="text-2xl font-bold text-pink-700 mb-6 text-center">Add New Address</h2>
+        <h2 className="text-2xl font-bold text-pink-700 mb-6 text-center">
+          Add New Address
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
@@ -98,6 +108,27 @@ const GetAddress = () => {
             className="p-3 border border-pink-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-sm"
             required
           />
+
+          <input
+            name="altPhone"
+            value={formData.altPhone}
+            onChange={handleChange}
+            placeholder="Alternate Phone"
+            className="p-3 border border-pink-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-sm"
+          />
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="isDefault"
+              checked={formData.isDefault}
+              onChange={handleChange}
+              className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
+            />
+            <label className="text-sm text-gray-700">
+              Set as Default Address
+            </label>
+          </div>
 
           <div className="text-center">
             <button
